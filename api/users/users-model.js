@@ -1,10 +1,9 @@
 const db = require('../../data/db-config.js');
 
-function bul() {
+ function bul() {
   /**
     2 tabloyu birleştirmeniz lazım (join)
     Tüm kullanıcılar DİZİSİNİ çözümlemeli
-
     [
       {
         "user_id": 1,
@@ -18,13 +17,17 @@ function bul() {
       }
     ]
    */
+    return db("users as u")
+ .leftJoin("roles as r","u.role_id","r.role_id")
+ .select("u.user_id","u.username","r.role_name")
+  
+
 }
 
 function goreBul(filtre) {
   /**
     2 tabloyu birleştirmeniz gerekiyor
     Filtreyle eşleşen kullanıcıları içeren DİZİYİ çözümlemeli
-
     [
       {
         "user_id": 1,
@@ -34,33 +37,37 @@ function goreBul(filtre) {
       }
     ]
    */
+    return db("users as u")
+    .leftJoin("roles as r","u.role_id","r.role_id")
+    .select("u.user_id","u.username","u.password","r.role_name")
+    .where(filtre)
 }
 
 function idyeGoreBul(user_id) {
   /**
     2 tabloyu birleştirmeniz gerekiyor
     Verilen id li kullanıcıyı çözümlemeli
-
     {
       "user_id": 2,
       "username": "sue",
       "role_name": "instructor"
     }
    */
+    return db("users as u")
+    .leftJoin("roles as r","u.role_id","r.role_id")
+    .select("u.user_id","u.username","r.role_name")
+    .where("user_id",user_id).first()
 }
 
 /**
   Kullanıcı oluşturmak için tek bir insert varsa (users tablosuna) eğer verilen role_name db'de mevcutsa
   ya da 2 insert varsa (önce roles ve sonra users tablosuna)
   role_name dbde kayıtlı değilse.
-
   Kullanıcı oluşturmak gibi bir işlem birden fazla tabloya veri ekliyorsa,
   tüm operasyonların başarılı veya başarısız olmasını isteriz. Eğer yeni role eklenemezse
   kullanıcı eklemesinin de başarısız olması gerekir.
-
   Bu gibi durumlarda şu işlemleri kullanırız: işlemin içindeki herhangi birisi başarısız olursa,
   tüm veritabanı içindeki değişiklikler geri alınır
-
   {
     "user_id": 7,
     "username": "anna",
